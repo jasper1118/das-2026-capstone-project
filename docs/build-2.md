@@ -36,7 +36,12 @@
 
 ### S04: As an organizer, I want to publish and unpublish an event, so that I control when it goes public
 
-*Written by you, in pairs, during the Build 2 class. Add your three criteria here before you paste the AI prompt below.*
+  **Given** a published event
+  **When** an organizer unpublishes it
+  **Then** its status is draft and it no longer  appears in the public list.
+  **Given** a published event
+  **When** the publisher unpublishes an event
+  **Then** if tickets have been booked and paid for, the money should be refunded. And if it pending, it should be cancelled.
 
 ### S05: As an attendee, I want to search, filter and sort published events, so that I can find one I like
 
