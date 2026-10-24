@@ -66,8 +66,10 @@ export function createEvent(store, details) {
   if (typeof venue !== 'string') {
     throw new DomainError('VALIDATION', 'Venue must be text');
   }
+  const datePart = /^(\d{4}-\d{2}-\d{2})/.exec(startsAt)?.[1];
   const date = new Date(startsAt);
-  if (Number.isNaN(date.getTime())) {
+  if (!datePart || Number.isNaN(date.getTime())
+    || new Date(`${datePart}T00:00:00.000Z`).toISOString().slice(0, 10) !== datePart) {
     throw new DomainError('VALIDATION', 'startsAt must be a valid date');
   }
   const event = {
@@ -82,6 +84,62 @@ export function createEvent(store, details) {
   };
   store.events.set(event.id, event);
   return event;
+}
+
+export function publishEvent(store, eventId) {
+  requireStore(store);
+  requireText(eventId, 'Event ID');
+  const event = store.events.get(eventId);
+  if (!event) throw new DomainError('NOT_FOUND', 'Event not found');
+  if (event.tierIds.length === 0) {
+    throw new DomainError('INVALID_STATE', 'An event needs at least one ticket tier before publishing');
+  }
+  event.status = 'published';
+  return event;
+}
+
+export function unpublishEvent(store, eventId) {
+  requireStore(store);
+  requireText(eventId, 'Event ID');
+  const event = store.events.get(eventId);
+  if (!event) throw new DomainError('NOT_FOUND', 'Event not found');
+
+  const eventTierIds = new Set(event.tierIds);
+  for (const booking of store.bookings.values()) {
+    if (!eventTierIds.has(booking.tierId) || !HOLDS_SEATS.has(booking.status)) continue;
+
+    const wasPaid = booking.status === 'paid';
+    const tier = getTier(store, booking.tierId);
+    tier.sold -= booking.quantity;
+    booking.status = 'cancelled';
+
+    if (wasPaid) {
+      booking.refundCents = booking.amountCents;
+    }
+  }
+
+  event.status = 'draft';
+  return event;
+}
+
+export function listEventSummaries(store, { publishedOnly = true } = {}) {
+  requireStore(store);
+  const summaries = [];
+  for (const event of store.events.values()) {
+    if (publishedOnly && event.status !== 'published') continue;
+
+    const { tierIds, ...eventDetails } = event;
+    const tiers = tierIds.map((tierId) => store.tiers.get(tierId)).filter(Boolean)
+      .map((tier) => ({ ...tier, seatsLeft: seatsLeft(tier) }));
+    const prices = tiers.map((tier) => tier.priceCents);
+    summaries.push({
+      ...eventDetails,
+      tiers,
+      cheapestPriceCents: prices.length ? Math.min(...prices) : undefined,
+      seatsLeft: tiers.reduce((total, tier) => total + tier.seatsLeft, 0),
+    });
+  }
+  return summaries;
 }
 
 export function addTier(store, eventId, details) {

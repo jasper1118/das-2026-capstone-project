@@ -13,11 +13,8 @@ Every time you give an AI tool a significant prompt, add an entry. Three lines e
 ## Build 2
 
 ### Prompt 1: Build 2 prompt (docs/build-2.md)
-- **What I asked:**
-- **What came back:**
-- **What was wrong (or "nothing"):**
+- **What I asked:** Add a stable, non-mutating merge sort, event publishing & unpublishing functions, summaries, event search, filters and sorting, acceptance-criteria tests and  test scripts.
+- **What came back:** Added the Build 2 domain functions and tests. All the tests carried out passed, and the existing demo still worked.
+- **What was wrong (or "nothing"):** When unpublishing, nothing was being done to the tickets that were pending, so i fixed it to cancel pending tickets.
 
-### Prompt 2:
-- **What I asked:**
-- **What came back:**
-- **What was wrong (or "nothing"):**
+
