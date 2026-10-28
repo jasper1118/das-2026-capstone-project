@@ -17,4 +17,11 @@ Every time you give an AI tool a significant prompt, add an entry. Three lines e
 - **What came back:** Added the Build 2 domain functions and tests. All the tests carried out passed, and the existing demo still worked.
 - **What was wrong (or "nothing"):** When unpublishing, nothing was being done to the tickets that were pending, so i fixed it to cancel pending tickets.
 
+## Build 3
+
+### Prompt 1: Build 3 architecture, state machine, and server
+- **What I asked:** Add the architecture diagrams, booking lifecycle rules, tiny HTTP router and server, configuration, and tests from `docs/build-3.md`.
+- **What came back:** Added the diagrams, transition rules, HTTP/static-file server, startup script, and focused tests. Existing domain files were left unchanged.
+- **What was wrong (or "nothing"):** Nothing incorrect remained after checking every state pair and exercising health, JSON errors, API 404s, and static path containment.
+
 
