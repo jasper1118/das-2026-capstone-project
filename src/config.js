@@ -1,13 +1,6 @@
-function readPort(value) {
-  if (value === undefined || value === '') return 3000;
-  const port = Number(value);
-  if (!Number.isInteger(port) || port < 1 || port > 65535) {
-    throw new Error('PORT must be a whole number between 1 and 65535');
-  }
-  return port;
-}
-// uses port 3000, but if port 3000 isn't available, it uses another.
+const portValue = process.env.PORT;
+export const PORT = portValue === undefined || portValue === '' ? 3000 : Number(portValue);
 
-export const config = Object.freeze({
-  port: readPort(process.env.PORT),
-});
+if (!Number.isInteger(PORT) || PORT < 0 || PORT > 65535) {
+  throw new RangeError('PORT must be an integer between 0 and 65535');
+}

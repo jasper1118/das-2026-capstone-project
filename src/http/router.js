@@ -1,63 +1,55 @@
-function pathSegments(path) {
-  try {
-    return new URL(path, 'http://router.local').pathname.split('/').filter(Boolean);
-  } catch {
-    return null;
-  }
-}
+import { DomainError } from '../domain/errors.js';
 
 export class Router {
   #routes = [];
 
   add(method, path, handler) {
-    if (typeof method !== 'string' || typeof path !== 'string' || typeof handler !== 'function') {
-      throw new TypeError('A route requires a method, path, and handler');
+    if (typeof method !== 'string' || !method.trim() || typeof path !== 'string' || !path.startsWith('/')) {
+      throw new TypeError('A route requires an HTTP method and an absolute path');
     }
-    if (!path.startsWith('/')) throw new TypeError('Route paths must start with /');
+    if (typeof handler !== 'function') throw new TypeError('A route handler must be a function');
 
-    this.#routes.push({
-      method: method.toUpperCase(),
-      segments: pathSegments(path),
-      handler,
-    });
+    const segments = path.split('/').slice(1);
+    this.#routes.push({ method: method.toUpperCase(), path, segments, handler });
     return this;
   }
 
+  get(path, handler) {
+    return this.add('GET', path, handler);
+  }
+
+  post(path, handler) {
+    return this.add('POST', path, handler);
+  }
+
   match(method, path) {
-    const segments = pathSegments(path);
-    if (!segments) return undefined;
+    const requestedSegments = path.split('/').slice(1);
 
     for (const route of this.#routes) {
-      if (route.method !== String(method).toUpperCase() || route.segments.length !== segments.length) {
-        continue;
-      }
+      if (route.method !== method.toUpperCase() || route.segments.length !== requestedSegments.length) continue;
 
-      const params = Object.create(null);
+      const params = {};
       let matches = true;
-      for (let index = 0; index < segments.length; index += 1) {
+      for (let index = 0; index < route.segments.length; index += 1) {
         const expected = route.segments[index];
-        let actual;
-        try {
-          actual = decodeURIComponent(segments[index]);
-        } catch {
-          matches = false;
-          break;
-        }
-
+        const actual = requestedSegments[index];
         if (expected.startsWith(':')) {
-          params[expected.slice(1)] = actual;
+          if (!actual) {
+            matches = false;
+            break;
+          }
+          try {
+            params[expected.slice(1)] = decodeURIComponent(actual);
+          } catch {
+            throw new DomainError('INVALID_PATH', 'The request path is invalid');
+          }
         } else if (expected !== actual) {
           matches = false;
           break;
         }
       }
-
       if (matches) return { handler: route.handler, params };
     }
-    return undefined;
+    return null;
   }
-}
-
-export function createRouter() {
-  return new Router();
 }
