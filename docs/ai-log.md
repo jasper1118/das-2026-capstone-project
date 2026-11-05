@@ -1,5 +1,12 @@
 # AI log
 
+## Build 4: Working REST API
+
+- **Asked:** Implement the Build 4 in-memory REST API using injected async repositories and services, existing domain search/state rules, mock payments, shared HTTP errors, examples and API tests.
+- **What came back:** Added the memory repository, event and booking services, mock payment gateway, API routes, route documentation and real-server tests.
+- **Review and changes:** The integration tests cover validation, ownership, declined payment retry, duplicate payment prevention, unpaid cancellation, and inventory release on unpublish. No test failures were found during review.
+- **Unclear rule:** Build 2 requires unpublishing to refund paid bookings, but Build 4 specifies only a mock `charge()` operation and defers refund behavior. Unpublish marks paid bookings `refunded` and releases their seats; it does not represent an external money transfer.# AI log
+
 Every time you give an AI tool a significant prompt, add an entry. Three lines each.
 "Nothing was wrong" is allowed, but it is rarely true. Your instructor will read this.
 

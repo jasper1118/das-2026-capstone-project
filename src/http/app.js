@@ -4,6 +4,7 @@ import { createServer } from 'node:http';
 import { extname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DomainError } from '../domain/errors.js';
+import { createApiRouter } from './apiRouter.js';
 import { Router } from './router.js';
 
 const DEFAULT_PUBLIC_DIRECTORY = fileURLToPath(new URL('../../public/', import.meta.url));
@@ -28,6 +29,16 @@ function sendJson(response, status, body) {
 
 function sendError(response, status, code, message) {
   sendJson(response, status, { error: { code, message } });
+}
+
+function statusForError(error) {
+  if (error.code === 'UNAUTHENTICATED') return 401;
+  if (error.code === 'FORBIDDEN') return 403;
+  if (error.code === 'NOT_FOUND') return 404;
+  if (['INVALID_STATE', 'INVALID_TRANSITION', 'PAYMENT_DECLINED', 'SOLD_OUT', 'NOT_SOLD_OUT'].includes(error.code)) {
+    return 409;
+  }
+  return 400;
 }
 
 async function readJsonBody(request) {
@@ -102,7 +113,7 @@ async function servePublicFile(response, pathname, publicDirectory, method) {
   }
 }
 
-export function createAppServer({ router = new Router(), publicDirectory = DEFAULT_PUBLIC_DIRECTORY } = {}) {
+export function createAppServer({ router = createApiRouter(), publicDirectory = DEFAULT_PUBLIC_DIRECTORY } = {}) {
   if (!router.match('GET', '/health')) {
     router.get('/health', () => ({ status: 200, body: { status: 'ok' } }));
   }
@@ -129,7 +140,7 @@ export function createAppServer({ router = new Router(), publicDirectory = DEFAU
         return;
       }
       if (error instanceof DomainError) {
-        sendError(response, 400, error.code, error.message);
+        sendError(response, statusForError(error), error.code, error.message);
         return;
       }
       sendError(response, 500, 'INTERNAL_ERROR', 'An unexpected error occurred');
