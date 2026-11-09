@@ -1,15 +1,5 @@
 # AI log
 
-## Build 4: Working REST API
-
-- **Asked:** Implement the Build 4 in-memory REST API using injected async repositories and services, existing domain search/state rules, mock payments, shared HTTP errors, examples and API tests.
-- **What came back:** Added the memory repository, event and booking services, mock payment gateway, API routes, route documentation and real-server tests.
-- **Review and changes:** The integration tests cover validation, ownership, declined payment retry, duplicate payment prevention, unpaid cancellation, and inventory release on unpublish. No test failures were found during review.
-- **Unclear rule:** Build 2 requires unpublishing to refund paid bookings, but Build 4 specifies only a mock `charge()` operation and defers refund behavior. Unpublish marks paid bookings `refunded` and releases their seats; it does not represent an external money transfer.# AI log
-
-Every time you give an AI tool a significant prompt, add an entry. Three lines each.
-"Nothing was wrong" is allowed, but it is rarely true. Your instructor will read this.
-
 ## Build 1
 
 ### Prompt 1: Build 1 domain core
@@ -31,4 +21,10 @@ Every time you give an AI tool a significant prompt, add an entry. Three lines e
 - **What came back:** Added the diagrams, transition rules, HTTP/static-file server, startup script, and focused tests. Existing domain files were left unchanged.
 - **What was wrong (or "nothing"):** Nothing incorrect remained after checking every state pair and exercising health, JSON errors, API 404s, and static path containment.
 
+## Build 4
 
+### Prompt 1: Build 4 working REST API
+- **What I asked:** Implement the in-memory REST API for creating and publishing events, searching, booking, mock payment, and cancellation.
+- **What came back:** The repository, services, payment gateway, API routes, examples, and API tests were present. I ran the configured Node test command directly; all 45 tests passed.
+- **What was wrong (or "nothing"):** My first PowerShell request returned `INVALID_JSON` because the request body syntax needed to work with PowerShell. A later `404` came from an older Node server process already using port 3000, not from the current API routes. Restarting the server from the project folder fixed it. The API examples use Bash syntax, so they are not directly pasteable into PowerShell.
+- **What I changed:** I restarted the server from the project folder and used a PowerShell-compatible request. No application source files were changed during this troubleshooting.
