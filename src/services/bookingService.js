@@ -34,11 +34,6 @@ export function createBookingService(repository, paymentGateway) {
         throw new DomainError('VALIDATION', `quantity must be between 1 and ${MAX_TICKETS_PER_BOOKING}`);
       }
 
-      const seatsLeft = tier.capacity - tier.sold;
-      if (seatsLeft < quantity) {
-        throw new DomainError('SOLD_OUT', `Only ${seatsLeft} ticket(s) left in ${tier.name}`, { seatsLeft });
-      }
-
       let reference;
       do {
         reference = referenceCode();
@@ -58,8 +53,10 @@ export function createBookingService(repository, paymentGateway) {
         throw new DomainError('VALIDATION', 'Booking total exceeds the supported whole-cent amount');
       }
 
-      tier.sold += quantity;
-      await repository.updateTier(tier);
+      const reserved = await repository.reserveSeats(tierId, quantity);
+      if (!reserved) {
+        throw new DomainError('SOLD_OUT', `Not enough tickets left in ${tier.name}`);
+      }
       return repository.createBooking(booking);
     },
 

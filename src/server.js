@@ -1,9 +1,13 @@
 import { pathToFileURL } from 'node:url';
 import { createAppServer } from './http/app.js';
+import { createApiRouter } from './http/apiRouter.js';
 import { PORT } from './config.js';
+import { createSqliteRepository } from './repositories/sqlite.js';
 
 export function startServer(port = PORT) {
-  const server = createAppServer();
+  const repository = createSqliteRepository();
+  const server = createAppServer({ router: createApiRouter({ repository }) });
+  server.once('close', () => repository.close());
   server.listen(port, () => {
     console.log(`Event ticketing server listening on port ${port}`);
   });

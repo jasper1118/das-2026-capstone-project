@@ -27,6 +27,12 @@ export function createMemoryRepository() {
     async findTierById(tierId) {
       return tiers.get(tierId) ?? null;
     },
+    async reserveSeats(tierId, quantity) {
+      const tier = tiers.get(tierId);
+      if (!tier || tier.sold + quantity > tier.capacity) return false;
+      tier.sold += quantity;
+      return true;
+    },
     async listTiersForEvent(eventId) {
       return [...tiers.values()].filter((tier) => tier.eventId === eventId);
     },
