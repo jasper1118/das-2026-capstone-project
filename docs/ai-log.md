@@ -28,3 +28,11 @@
 - **What came back:** The repository, services, payment gateway, API routes, examples, and API tests were present. I ran the configured Node test command directly; all 45 tests passed.
 - **What was wrong (or "nothing"):** My first PowerShell request returned `INVALID_JSON` because the request body syntax needed to work with PowerShell. A later `404` came from an older Node server process already using port 3000, not from the current API routes. Restarting the server from the project folder fixed it. The API examples use Bash syntax, so they are not directly pasteable into PowerShell.
 - **What I changed:** I restarted the server from the project folder and used a PowerShell-compatible request. No application source files were changed during this troubleshooting.
+
+## Build 5
+
+### Prompt 1 and Prompt 2: SQLite persistence and overselling
+- **What I asked:** Add SQLite persistence, a seed command and a 50-request reproduction, then fix last-seat overselling with a database-level conditional update and a regression test.
+- **What came back:** Added the SQLite repository and persistent server, seed and demo scripts, then an atomic seat reservation and a 50-attendee test.
+- **What was wrong (or "nothing"):** The first booking path checked and updated a stale tier in separate steps, so all 50 requests could succeed for the same last seat. The SQLite repository now increments `sold` only when `sold + quantity <= capacity`, and the service treats a zero-row update as `SOLD_OUT`.
+- **Verification:** Before the fix, 50 of 50 requests succeeded and bookings counted 60 seats against capacity 11. After the fix, the test expects exactly 1 success and 49 `SOLD_OUT` responses, with 11 seats booked in total.
