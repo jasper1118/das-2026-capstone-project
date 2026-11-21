@@ -35,4 +35,10 @@
 - **What I asked:** Add SQLite persistence, a seed command and a 50-request reproduction, then fix last-seat overselling with a database-level conditional update and a regression test.
 - **What came back:** Added the SQLite repository and persistent server, seed and demo scripts, then an atomic seat reservation and a 50-attendee test.
 - **What was wrong (or "nothing"):** The first booking path checked and updated a stale tier in separate steps, so all 50 requests could succeed for the same last seat. The SQLite repository now increments `sold` only when `sold + quantity <= capacity`, and the service treats a zero-row update as `SOLD_OUT`.
-- **Verification:** Before the fix, 50 of 50 requests succeeded and bookings counted 60 seats against capacity 11. After the fix, the test expects exactly 1 success and 49 `SOLD_OUT` responses, with 11 seats booked in total.
+
+## Build 6
+
+### Prompt 1: Frontend on mock data
+- **What I asked:** Build event discovery, filters, event details, ticket selection, a hold countdown, and mock card checkout using plain HTML, CSS, and browser JavaScript modules.
+- **What came back:** Added the Rally discovery and event pages, shared DOM and price helpers, mock events/API, responsive styles, and a complete booking-to-payment flow.
+- **What was wrong (or "nothing"):** nothing.
