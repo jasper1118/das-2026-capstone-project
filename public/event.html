@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#183f37">
+    <meta name="description" content="Event details and ticket checkout on Rally.">
+    <title>Event tickets - Rally</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <script type="module" src="/js/pages/event.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to event details</a>
+    <div class="announcement-bar">
+      <p>GOOD PLANS, CLOSE BY <span aria-hidden="true">/</span> LAGOS, NIGERIA</p>
+      <p class="announcement-note">Your city, in good company.</p>
+    </div>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Rally home">
+        <span class="brand-mark" aria-hidden="true">R</span>
+        <span>rally<span class="brand-period">.</span></span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="nav-link" href="/#events">Discover</a>
+      </nav>
+      <span class="header-location"><span class="location-dot" aria-hidden="true"></span>Lagos <span aria-hidden="true">⌄</span></span>
+    </header>
+    <main id="main-content" class="page-shell event-page">
+      <div id="event-root" aria-live="polite" aria-busy="true"></div>
+    </main>
+    <footer class="site-footer">
+      <a class="brand footer-brand" href="/" aria-label="Rally home">
+        <span class="brand-mark" aria-hidden="true">R</span>
+        <span>rally<span class="brand-period">.</span></span>
+      </a>
+      <p>Go where the good energy is.</p>
+      <span class="footer-edition">LAGOS · 2026</span>
+    </footer>
+  </body>
+</html>
